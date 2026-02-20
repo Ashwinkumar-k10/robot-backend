@@ -12,11 +12,7 @@ const client = mqtt.connect("mqtt://broker.hivemq.com:1883");
 
 client.on("connect", () => {
     console.log("✅ Connected to MQTT Broker");
-    client.subscribe("esp32/data", (err) => {
-        if (!err) {
-            console.log("📡 Subscribed to esp32/data");
-        }
-    });
+    client.subscribe("esp32/data");
 });
 
 client.on("message", (topic, message) => {
@@ -24,24 +20,18 @@ client.on("message", (topic, message) => {
     console.log("📥 Received:", latestMessage);
 });
 
-client.on("error", (err) => {
-    console.error("❌ MQTT Error:", err);
-});
-
-client.on("reconnect", () => {
-    console.log("🔄 Reconnecting to MQTT...");
-});
-
 // Routes
 app.get("/", (req, res) => {
-    res.send("🚀 Node Backend Running");
+    res.send("🚀 Robot Backend Running on Render");
 });
 
 app.get("/data", (req, res) => {
     res.json({ data: latestMessage });
 });
 
-// Start Server
-app.listen(5000, () => {
-    console.log("🌐 Server running on http://localhost:5000");
+// Render requires dynamic port
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`🌐 Server running on port ${PORT}`);
 });
